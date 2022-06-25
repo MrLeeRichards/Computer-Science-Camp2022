@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Name Maker</title>
+</head>
+<body>
+    <style>
+        #divCurrentName {
+            font-size: 2em;
+        }
+
+        #divScore {
+            font-size: 1.5em;
+            color: grey;
+        }
+
+        .oldScore {
+            color: lightgrey;
+        }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="/scripts/nameModel.js"></script>
+    <script>
+        let currentWord;
+        let wordScore;
+        $(function() {
+            setInterval(function() { if (currentWord) { searchForBetterCandidate(100) } }, 100);
+
+            $("#inputName").on("change", function () {
+                currentWord = scramble($("#inputName").val());
+                wordScore = scoreFullName(currentWord);
+
+                $("#divHistory").empty();
+                updateDisplay();
+            });
+        });
+
+        function updateDisplay() { 
+            $("#divCurrentName").text(splitAndCapitalize(currentWord).join(" "));
+            $("#divScore").text("Score: " + wordScore);
+        }
+
+        function splitAndCapitalize(fullName) {
+            let names = fullName.trim().split(" ");
+            for (i in names) {
+                names[i] = names[i].charAt(0).toUpperCase() + names[i].slice(1);
+            }
+
+            return names;
+        }
+
+        function scoreFullName(fullName) {
+            var score = 0.0;
+            var names = splitAndCapitalize(fullName);
+
+            for (i in names) {
+                score += scoreName(names[i]);
+            }
+
+            return score;
+        }
+
+        function scramble(text) {
+            newWord = text.replace(/\s/g, "").toLowerCase();
+            var spaceCount = Math.floor(newWord.length / 10.0);
+            for (var i = 0; i < spaceCount; i++) { newWord += " "; }
+            newWord = newWord.split("").sort((a, b) => 0.01 - Math.random()).join("");
+
+            return newWord;
+        }
+
+        function searchForBetterCandidate(iterations) {
+            var candidate;
+            var candidateScore;
+
+            for (var i = 0; i < iterations; i++) {
+                candidate = randomSwap(candidate ?? currentWord);
+                candidateScore = scoreFullName(candidate);
+
+                if (candidateScore > wordScore) {
+                    $("#divHistory").prepend("<div>" + splitAndCapitalize(currentWord).join(" ") + " <span class=\"oldScore\">" + wordScore + "</span></div>");
+                    currentWord = candidate;
+                    wordScore = candidateScore;
+                    updateDisplay();
+                }
+            }
+        }
+
+        function randomSwap(fullName) {
+            swapElements = [Math.floor(fullName.length * Math.random()), Math.floor(fullName.length * Math.random())];
+            swapElements.sort();
+
+            var array = fullName.split("");
+            var swap = array[swapElements[0]];
+            array[swapElements[0]] = array[swapElements[1]];
+            array[swapElements[1]] = swap;
+
+            return array.join("");
+        }
+    </script>
+
+    <input id="inputName">
+    <div id="divCurrentName"></div>
+    <div id="divScore"></div>
+    <div id="divHistory"></div>
+</body>
+</html>

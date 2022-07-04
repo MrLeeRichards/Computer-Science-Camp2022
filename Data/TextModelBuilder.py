@@ -23,7 +23,7 @@ def processFile(file):
 
 model = {}
 
-textFile = open("SonnetsProcessed.txt", encoding="utf-8")
+textFile = open("ChristmasCarolProcessed.txt", encoding="utf-8")
 processFile(textFile)
 textFile.close()
 

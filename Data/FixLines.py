@@ -1,4 +1,4 @@
-textFile = open("Sonnets.txt", encoding="utf-8")
+textFile = open("ChristmasCarol.txt", encoding="utf-8")
 
 newlineFree = ""
 
@@ -7,7 +7,7 @@ for line in textFile.readlines():
 
 textFile.close()
 
-outFile = open("SonnetsProcessed.txt", "w", encoding="utf-8")
+outFile = open("ChristmasCarolProcessed.txt", "w", encoding="utf-8")
 for sentence in newlineFree.split(". "):
     outFile.write(sentence + "\n")
 
